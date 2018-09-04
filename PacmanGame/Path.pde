@@ -42,10 +42,10 @@ class Path {
   //--------------------------------------------------------------------------------------------------------------------------------------------
   //draw lines representing the path
   void show() {
-    strokeWeight(2);
-    for (int i = 0; i< path.size()-1; i++) {
-      //line(path.get(i).x*16 +8, path.get(i).y*16 +8, path.get(i+1).x*16 +8, path.get(i+1).y*16 +8);//
-    }
+    //strokeWeight(2);
+    //for (int i = 0; i< path.size()-1; i++) {
+    //  line(path.get(i).x*16 +8, path.get(i).y*16 +8, path.get(i+1).x*16 +8, path.get(i+1).y*16 +8);//
+    //}
     //ellipse((path.get(path.size() -1).x*16)+8, (path.get(path.size() -1).y*16)+8, 5, 5);
   }
 }

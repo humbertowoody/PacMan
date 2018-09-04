@@ -10,9 +10,9 @@ import netP5.*;
 OscP5 osc;
 NetAddress madMapper;
 
-String ip = "127.0.0.1"; // localhost for testing
+String ip = "192.168.0.2"; // localhost for testing
 
-Pacman pacman;
+Pacman pacman, pacman2;
 PImage img;//background image 
 
 Pinky pinky;
@@ -20,6 +20,7 @@ Blinky blinky;
 Clyde clyde;
 Inky inky;
 Tile[][] tiles = new Tile[31][28]; //note it goes y then x because of how I inserted the data
+
 int[][] tilesRepresentation = { 
   {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 
   {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, 
@@ -52,15 +53,13 @@ int[][] tilesRepresentation = {
   {1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1}, 
   {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, 
   {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};//its not sexy but it does the job
-
-boolean inGame = false;
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
 void setup() {
-  osc = new OscP5(this, 9000);
-  madMapper = new NetAddress(ip, 8000);
   frameRate(100);
   size(448, 496);
+  osc = new OscP5(this, 9000);
+  madMapper = new NetAddress(ip, 8000);
   img = loadImage("map.jpg");
   //initiate tiles
   for (int i = 0; i< 28; i++) {
@@ -83,7 +82,8 @@ void setup() {
     }
   }
 
-  pacman = new Pacman();
+  pacman = new Pacman(0);
+  pacman2 = new Pacman(0);
   pinky = new Pinky();
   blinky = new Blinky();
   clyde = new Clyde();
@@ -92,62 +92,90 @@ void setup() {
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
 void draw() {
-  if (inGame) {
-    image(img, 0, 0);
-    if (!pacman.gameOver) {
-      stroke(255);
-  
-      for (int i = 0; i< 28; i++) {
-        for (int j = 0; j< 31; j++) {
-          tiles[j][i].show();
-        }
+  image(img,0,0);
+  if (!pacman.gameOver) {
+    stroke(255);
+
+    for (int i = 0; i< 28; i++) {
+      for (int j = 0; j< 31; j++) {
+        tiles[j][i].show();
       }
-      pacman.move();
-  
-      //move and show the ghosts
-      inky.show();
-      inky.move();
-  
-      clyde.show();
-      clyde.move();
-  
-      pinky.show();
-      pinky.move();
-  
-      blinky.show();
-      blinky.move();
-  
-      //show pacman last so he appears over the path lines
-      pacman.show();
     }
+    
+    pacman.move();
+    pacman2.move();
+
+    //move and show the ghosts
+    inky.show();
+    inky.move();
+
+    clyde.show();
+    clyde.move();
+
+    pinky.show();
+    pinky.move();
+
+    blinky.show();
+    blinky.move();
+
+    //show pacman last so he appears over the path lines
+    pacman.show();
+    pacman2.show();
   } else {
-    background(0);
-    text("hola",10,10);
+    text("Hola pinches perros alv", 100,100);
+    osc.send(new OscMessage("/cues/Bank 1/scenes/by_cell/col_2"), madMapper);
   }
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
 void keyPressed() {//controls for pacman
+  println("uhiuhiuh");
   switch(key) {
-  case CODED:
-    switch(keyCode) {
-    case UP:
-      pacman.turnTo = new PVector(0, -1);
-      pacman.turn = true;
-      break;
-    case DOWN:
-      pacman.turnTo = new PVector(0, 1);
-      pacman.turn = true;
-      break;
-    case LEFT:
-      pacman.turnTo = new PVector(-1, 0);
-      pacman.turn = true;
-      break;
-    case RIGHT:
-      pacman.turnTo = new PVector(1, 0);
-      pacman.turn = true;
-      break;
-    }
+    case CODED:
+      switch(keyCode) {
+        case UP:
+          pacman.turnTo = new PVector(0, -1);
+          pacman.turn = true;
+          break;
+        case DOWN:
+          pacman.turnTo = new PVector(0, 1);
+          pacman.turn = true;
+          break;
+        case LEFT:
+          pacman.turnTo = new PVector(-1, 0);
+          pacman.turn = true;
+          break;
+        case RIGHT:
+          pacman.turnTo = new PVector(1, 0);
+          pacman.turn = true;
+          break;
+       }
+       break;
+   // Second Pacman
+   // left
+   case 'a':
+   case 'A':
+     pacman2.turnTo = new PVector(-1, 0);
+     pacman2.turn = true;
+     break;
+   // down
+   case 's':
+   case 'S':
+     pacman2.turnTo = new PVector(0, 1);
+     pacman2.turn = true;
+     break;
+   // right
+   case 'd':
+   case 'D':
+     pacman2.turnTo = new PVector(1, 0);
+     pacman2.turn = true;
+     break;
+   // up
+   case 'w':
+   case 'W':
+     pacman2.turnTo = new PVector(0, -1);
+     pacman2.turn = true;
+     break;
   }
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------
