@@ -43,6 +43,8 @@ int[][] tilesRepresentation = {
   {1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1}, 
   {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, 
   {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};//its not sexy but it does the job
+
+boolean inGame = false;
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
 void setup() {
@@ -79,32 +81,37 @@ void setup() {
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
 void draw() {
-  image(img, 0, 0);
-  if (!pacman.gameOver) {
-    stroke(255);
-
-    for (int i = 0; i< 28; i++) {
-      for (int j = 0; j< 31; j++) {
-        tiles[j][i].show();
+  if (inGame) {
+    image(img, 0, 0);
+    if (!pacman.gameOver) {
+      stroke(255);
+  
+      for (int i = 0; i< 28; i++) {
+        for (int j = 0; j< 31; j++) {
+          tiles[j][i].show();
+        }
       }
+      pacman.move();
+  
+      //move and show the ghosts
+      inky.show();
+      inky.move();
+  
+      clyde.show();
+      clyde.move();
+  
+      pinky.show();
+      pinky.move();
+  
+      blinky.show();
+      blinky.move();
+  
+      //show pacman last so he appears over the path lines
+      pacman.show();
     }
-    pacman.move();
-
-    //move and show the ghosts
-    inky.show();
-    inky.move();
-
-    clyde.show();
-    clyde.move();
-
-    pinky.show();
-    pinky.move();
-
-    blinky.show();
-    blinky.move();
-
-    //show pacman last so he appears over the path lines
-    pacman.show();
+  } else {
+    background(0);
+    text("hola",10,10);
   }
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------
