@@ -2,6 +2,15 @@
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
+//import stuff for madmapper
+import oscP5.*;
+import netP5.*;
+
+// OSC Stuff
+OscP5 osc;
+NetAddress madMapper;
+
+String ip = "127.0.0.1"; // localhost for testing
 
 Pacman pacman;
 PImage img;//background image 
@@ -48,6 +57,8 @@ boolean inGame = false;
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
 void setup() {
+  osc = new OscP5(this, 9000);
+  madMapper = new NetAddress(ip, 8000);
   frameRate(100);
   size(448, 496);
   img = loadImage("map.jpg");
