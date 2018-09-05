@@ -118,7 +118,7 @@ class Inky {
       ghostNodes.add(new Node(13, 11));
     } else {
       if (chase) {
-        PVector pacmanPosition = new PVector((pacman.pos.x-8) / 16, (pacman.pos.y-8)/16);
+        PVector pacmanPosition = new PVector((pacman2.pos.x-8) / 16, (pacman2.pos.y-8)/16);
         PVector blinkyPosition = new PVector((blinky.pos.x-8)/16, (blinky.pos.y - 8)/16);
         PVector blinkyToPacman = new PVector(pacmanPosition.x - blinkyPosition.x, pacmanPosition.y - blinkyPosition.y);
 
@@ -126,7 +126,7 @@ class Inky {
         PVector nearestTile = getNearestNonWallTile(target);
 
         if (dist((pos.x-8)/16, (pos.y-8)/16, nearestTile.x, nearestTile.y)<1) {
-          ghostNodes.add(new Node((pacman.pos.x-8) / 16, (pacman.pos.y-8)/16));
+          ghostNodes.add(new Node((pacman2.pos.x-8) / 16, (pacman2.pos.y-8)/16));
         } else {
 
 
@@ -144,12 +144,12 @@ class Inky {
   //--------------------------------------------------------------------------------------------------------------------------------------------------
   //check if the ghost needs to change direction as well as other stuff
   void checkDirection() {
-    if (pacman.hitPacman(pos)) {//if hit pacman
+    if (pacman2.hitPacman(pos)) {//if hit pacman
       if (frightened) {//eaten by pacman
         returnHome = true;
         frightened = false;
       } else if (!returnHome) {//killPacman
-        pacman.kill();
+        pacman2.kill();
       }
     }
 

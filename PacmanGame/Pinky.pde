@@ -119,14 +119,14 @@ class Pinky {
       if (chase) {
         //pinky moves towards 4 positions ahead of pacman
         int lookAhead = 4;
-        PVector pacmanMatrixPos = new PVector((pacman.pos.x-8) / 16 +  (pacman.vel.x *lookAhead), (pacman.pos.y-8 )/16 +(pacman.vel.y *lookAhead));
+        PVector pacmanMatrixPos = new PVector((pacman2.pos.x-8) / 16 +  (pacman2.vel.x *lookAhead), (pacman2.pos.y-8 )/16 +(pacman2.vel.y *lookAhead));
         while (!(pacmanMatrixPos.x > 0 && pacmanMatrixPos.y >0 && pacmanMatrixPos.x <28 
           && pacmanMatrixPos.y < 31 && !tiles[(int)pacmanMatrixPos.y][(int)pacmanMatrixPos.x].wall)) {
           lookAhead -=1;
-          pacmanMatrixPos = new PVector((pacman.pos.x-8) / 16 +  (pacman.vel.x *lookAhead), (pacman.pos.y-8 )/16 +(pacman.vel.y *lookAhead));
+          pacmanMatrixPos = new PVector((pacman2.pos.x-8) / 16 +  (pacman2.vel.x *lookAhead), (pacman2.pos.y-8 )/16 +(pacman2.vel.y *lookAhead));
         }
         if (dist((pos.x-8)/16, (pos.y-8)/16, pacmanMatrixPos.x, pacmanMatrixPos.y)<1) {
-          ghostNodes.add(new Node((pacman.pos.x-8) / 16, (pacman.pos.y-8)/16));
+          ghostNodes.add(new Node((pacman2.pos.x-8) / 16, (pacman2.pos.y-8)/16));
         } else {
 
           ghostNodes.add(new Node(pacmanMatrixPos.x, pacmanMatrixPos.y));//(pacman.pos.x-8 + (pacman.vel.x *4)) / 16, (pacman.pos.y-8 +(pacman.vel.y *4))/16));
@@ -143,12 +143,12 @@ class Pinky {
   //--------------------------------------------------------------------------------------------------------------------------------------------------
   //check if the ghost needs to change direction as well as other stuff
   void checkDirection() {
-    if (pacman.hitPacman(pos)) {//if hit pacman
+    if (pacman2.hitPacman(pos)) {//if hit pacman
       if (frightened) {//eaten by pacman
         returnHome = true;
         frightened = false;
       } else if (!returnHome) {//killPacman
-        pacman.kill();
+        pacman2.kill();
       }
     }
 
