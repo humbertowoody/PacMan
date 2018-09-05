@@ -5,6 +5,14 @@ import java.util.LinkedList;
 //import stuff for madmapper
 import oscP5.*;
 import netP5.*;
+// stuff for video
+import processing.video.*;
+
+// Videos
+Movie pressStartMovie;
+Movie counterMovie;
+Movie gameOverMovie;
+Movie brandMovie;
 
 // OSC Stuff
 OscP5 osc;
@@ -63,43 +71,53 @@ void setup() {
   osc = new OscP5(this, 9000);
   madMapper = new NetAddress(ip, 8000);
   img = loadImage("map.jpg");
+  pressStartMovie = new Movie(this, "pressStart.mp4");
+  counterMovie = new Movie(this, "counter.mov");
+  gameOverMovie = new Movie(this, "gameOver.mov");
+  //brandMovie = new Movie(this, "");
+  
+  pressStartMovie.loop();
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
 void draw() {
   if (gameStage == 0) { // Press Start
     background(0);
-    text("Press Start", 250, 250);
+    image(pressStartMovie, 0, 0);
   } else if (gameStage == 1) { // 3, 2, 1
     // Animación 3, 2, 1
-    gameStage = 2;
-    //initiate tiles
-    for (int i = 0; i< 28; i++) {
-      for (int j = 0; j< 31; j++) {
-        tiles[j][i] = new Tile(16*i +8, 16*j+8);
-        switch(tilesRepresentation[j][i]) {
-        case 1: //1 is a wall
-          tiles[j][i].wall = true;
-          break;
-        case 0: // 0 is a dot
-          tiles[j][i].dot = true;
-          break;
-        case 8: // 8 is a big dot
-          tiles[j][i].bigDot = true;
-          break;
-        case 6://6 is a blank space
-          tiles[j][i].eaten = true;
-          break;
+    if(counterMovie.time() >= counterMovie.duration()) {
+      gameStage = 2;
+      //initiate tiles
+      for (int i = 0; i< 28; i++) {
+        for (int j = 0; j< 31; j++) {
+          tiles[j][i] = new Tile(16*i +8, 16*j+8);
+          switch(tilesRepresentation[j][i]) {
+          case 1: //1 is a wall
+            tiles[j][i].wall = true;
+            break;
+          case 0: // 0 is a dot
+            tiles[j][i].dot = true;
+            break;
+          case 8: // 8 is a big dot
+            tiles[j][i].bigDot = true;
+            break;
+          case 6://6 is a blank space
+            tiles[j][i].eaten = true;
+            break;
+          }
         }
       }
+    
+      pacman = new Pacman(color(255,255,0));
+      pacman2 = new Pacman(color(0,255,0));
+      pinky = new Pinky();
+      blinky = new Blinky();
+      clyde = new Clyde();
+      inky = new Inky();
+    } else {
+      image(counterMovie, 0,0);
     }
-  
-    pacman = new Pacman(0);
-    pacman2 = new Pacman(0);
-    pinky = new Pinky();
-    blinky = new Blinky();
-    clyde = new Clyde();
-    inky = new Inky();
   } else if (gameStage == 2) { // Juego
     image(img,0,0);
     if (!pacman.gameOver) {
@@ -133,75 +151,84 @@ void draw() {
     } else {
       gameStage = 3;
       osc.send(new OscMessage("/cues/Bank 1/scenes/by_cell/col_2"), madMapper);
+      gameOverMovie.play();
     }
   } else if (gameStage == 3) { // Game Over
-    background(0);
-    text("Uy, perdistessss", 100,100);
-    gameStage = 4;
-    delay(5000);
+    if (gameOverMovie.time() < gameOverMovie.duration()) {
+      image(gameOverMovie, 0,0);
+    } else {
+      gameStage = 4;
+    }
   } else { // Marca
     background(0);
     text("La marca verga va aquí", 100, 100);
     gameStage = 0;
     delay(5000);
+    pressStartMovie.loop();
   }
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
 void keyPressed() {//controls for pacman
-  println("Key pressed: " + key);
-  switch(key) {
-    case CODED:
-      switch(keyCode) {
-        case UP:
-          pacman.turnTo = new PVector(0, -1);
-          pacman.turn = true;
-          break;
-        case DOWN:
-          pacman.turnTo = new PVector(0, 1);
-          pacman.turn = true;
-          break;
-        case LEFT:
-          pacman.turnTo = new PVector(-1, 0);
-          pacman.turn = true;
-          break;
-        case RIGHT:
-          pacman.turnTo = new PVector(1, 0);
-          pacman.turn = true;
-          break;
-       }
+  if (gameStage == 2) {
+    switch(key) {
+      case CODED:
+        switch(keyCode) {
+          case UP:
+            pacman.turnTo = new PVector(0, -1);
+            pacman.turn = true;
+            break;
+          case DOWN:
+            pacman.turnTo = new PVector(0, 1);
+            pacman.turn = true;
+            break;
+          case LEFT:
+            pacman.turnTo = new PVector(-1, 0);
+            pacman.turn = true;
+            break;
+          case RIGHT:
+            pacman.turnTo = new PVector(1, 0);
+            pacman.turn = true;
+            break;
+         }
+         break;
+     // Second Pacman
+     // left
+     case 'a':
+     case 'A':
+       pacman2.turnTo = new PVector(-1, 0);
+       pacman2.turn = true;
        break;
-   // Second Pacman
-   // left
-   case 'a':
-   case 'A':
-     pacman2.turnTo = new PVector(-1, 0);
-     pacman2.turn = true;
-     break;
-   // down
-   case 's':
-   case 'S':
-     pacman2.turnTo = new PVector(0, 1);
-     pacman2.turn = true;
-     break;
-   // right
-   case 'd':
-   case 'D':
-     pacman2.turnTo = new PVector(1, 0);
-     pacman2.turn = true;
-     break;
-   // up
-   case 'w':
-   case 'W':
-     pacman2.turnTo = new PVector(0, -1);
-     pacman2.turn = true;
-     break;
-   case 'y':
-   case 'Y':
-     if (gameStage == 0){
-       gameStage = 1;
-     }
-     break;
+     // down
+     case 's':
+     case 'S':
+       pacman2.turnTo = new PVector(0, 1);
+       pacman2.turn = true;
+       break;
+     // right
+     case 'd':
+     case 'D':
+       pacman2.turnTo = new PVector(1, 0);
+       pacman2.turn = true;
+       break;
+     // up
+     case 'w':
+     case 'W':
+       pacman2.turnTo = new PVector(0, -1);
+       pacman2.turn = true;
+       break;
+    }
+  } else if (gameStage == 0) {
+    switch(key) {
+      case 'y':
+      case 'Y':
+        if (gameStage == 0){
+          gameStage = 1;
+          counterMovie.play();
+          pressStartMovie.stop();
+        }
+        break;
+    }
   }
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------
@@ -338,4 +365,8 @@ Path AStar(Node start, Node finish, PVector vel)
       }
     }
   }
+}
+
+void movieEvent(Movie m) {
+  m.read();
 }

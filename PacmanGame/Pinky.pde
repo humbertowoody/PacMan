@@ -53,7 +53,7 @@ class Pinky {
           stroke(colour);
           fill(colour);
         }
-        bestPath.show();//show the path the ghost is following
+        //bestPath.show();//show the path the ghost is following
       } else {//if frightened
         flashCount ++;
         if (flashCount > 800) {//after 8 seconds the ghosts are no longer frightened
