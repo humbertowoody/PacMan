@@ -116,8 +116,8 @@ void draw() {
         }
       }
     
-      pacman = new Pacman(pac1);
-      pacman2 = new Pacman(pac2);
+      pacman = new Pacman(pac1); // image for pac1
+      pacman2 = new Pacman(pac2); // image for pac2
       pinky = new Pinky();
       blinky = new Blinky();
       clyde = new Clyde();
