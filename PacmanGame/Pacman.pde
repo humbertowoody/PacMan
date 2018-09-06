@@ -8,11 +8,11 @@ class Pacman {
   int score = 0;
   int lives = 2;
   boolean  gameOver = false;
-  color pacColor;
+  PImage pacImage;
   //---------------------------------------------------------------------------------------------------------------------------------------------------------
   //constructor
-  Pacman(color c) {
-    pacColor = c;
+  Pacman(PImage c) {
+    pacImage = c;
     pos = new PVector(13*16+83, 23*16 +8);
   }
 
@@ -20,9 +20,10 @@ class Pacman {
   
   //draws pacman
   void show() {
-    fill(pacColor);
-    stroke(pacColor);
-    ellipse(pos.x, pos.y, 20, 20);
+    //fill(pacColor);
+    //stroke(pacColor);
+    //ellipse(pos.x, pos.y, 20, 20);
+    image(pacImage, pos.x-10, pos.y-10, 20, 20);
   }
 
   //---------------------------------------------------------------------------------------------------------------------------------------------------------

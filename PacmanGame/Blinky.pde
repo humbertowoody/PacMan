@@ -48,6 +48,7 @@ class Blinky {
         if (returnHome) {//have the ghost be transparent if on its way home
           stroke(colour, 100); 
           fill(colour, 100);
+          tint(0,0,0);
         } else {// colour the ghost
           stroke(colour);
           fill(colour);
@@ -63,12 +64,16 @@ class Blinky {
         if (floor(flashCount / 30) %2 ==0) {//make it flash white and blue every 30 frames
           stroke(255);
           fill(255);
+          tint(255);
         } else {//flash blue
           stroke(0, 0, 200);
           fill(0, 0, 200);
+          tint(0,0,200);
         }
       }
-      ellipse(pos.x, pos.y, 20, 20);//draw the ghost as a circle
+      //ellipse(pos.x, pos.y, 20, 20);//draw the ghost as a circle
+      image(f1, pos.x-10, pos.y-10, 20, 20);
+      noTint();
     }
   }
 

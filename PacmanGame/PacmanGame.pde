@@ -23,6 +23,8 @@ String ip = "192.168.0.2"; // localhost for testing
 Pacman pacman, pacman2;
 PImage img;//background image 
 
+PImage pac1, pac2, f1, f2, f3, f4;
+
 int gameStage = 0;
 
 Pinky pinky;
@@ -71,11 +73,16 @@ void setup() {
   osc = new OscP5(this, 9000);
   madMapper = new NetAddress(ip, 8000);
   img = loadImage("map.jpg");
-  pressStartMovie = new Movie(this, "pressStart.mp4");
-  counterMovie = new Movie(this, "counter.mov");
-  gameOverMovie = new Movie(this, "gameOver.mov");
+  pressStartMovie = new Movie(this, "pressStart.mov");
+  counterMovie = new Movie(this, "pressStart.mov");
+  gameOverMovie = new Movie(this, "pressStart.mov");
   //brandMovie = new Movie(this, "");
-  
+  pac1 = loadImage("pacman1.png");
+  pac2 = loadImage("pacman2.png");
+  f1 = loadImage("fantasma1.png");
+  f2 = loadImage("fantasma2.png");
+  f3 = loadImage("fantasma3.png");
+  f4 = loadImage("fantasma4.png");
   pressStartMovie.loop();
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------
@@ -109,8 +116,8 @@ void draw() {
         }
       }
     
-      pacman = new Pacman(color(255,255,0));
-      pacman2 = new Pacman(color(0,255,0));
+      pacman = new Pacman(pac1);
+      pacman2 = new Pacman(pac2);
       pinky = new Pinky();
       blinky = new Blinky();
       clyde = new Clyde();
@@ -148,6 +155,12 @@ void draw() {
       //show pacman last so he appears over the path lines
       pacman.show();
       pacman2.show();
+      
+      // Print scores
+      fill(255,255,0);
+      textSize(16);
+      text("SCORE: " + pacman.score, 179, 230);
+      text("VIDAS: " + (pacman.lives+1), 179,250);
     } else {
       gameStage = 3;
       osc.send(new OscMessage("/cues/Bank 1/scenes/by_cell/col_2"), madMapper);
