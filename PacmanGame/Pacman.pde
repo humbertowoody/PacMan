@@ -14,7 +14,7 @@ class Pacman {
       pacId = 0;
     } else {
       pacId = 1;
-      vel = new PVector(0,1);
+      vel = new PVector(1,0);
     }
     pos = new PVector(13*16+83, 23*16 +8);
   }

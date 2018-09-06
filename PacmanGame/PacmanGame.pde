@@ -93,8 +93,8 @@ int[][] tilesRepresentation = {
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
 void setup() {
-  frameRate(100);
   size(448, 496, P3D);
+  ambient = new SoundFile(this, "ambient.mp3");
   osc = new OscP5(this, 9000);
   madMapper = new NetAddress(ip, 8000);
   img = loadImage("map.jpg");
@@ -118,7 +118,7 @@ void setup() {
   pac2Image = pac2Izq;
   spout = new Spout(this);
   spout.createSender("We_Make");
-  ambient = new SoundFile(this, "ambient.mp3");
+  frameRate(100);
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
