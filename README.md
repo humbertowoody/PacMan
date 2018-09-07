@@ -1,7 +1,14 @@
-# PacmanGame
-I built the pacman game without the ai for pacman
+# PacMan Game
 
-I used processing to write this code and if you wanna run it then you will need processing
-https://processing.org/
+We forked the PacMan Game for an activation.
 
-For WeMake
+# Dependencies
+
+You need to install the following libraries in Processing for this to work:
+
+* Video
+* Spout for Processing
+* Sound
+* oscP5
+
+(C) We_Make 2018.
