@@ -7,6 +7,9 @@ import oscP5.*;
 import netP5.*;
 // stuff for video
 import processing.video.*;
+import spout.*;
+
+Spout spout;
 
 // Videos
 Movie pressStartMovie;
@@ -79,7 +82,7 @@ int[][] tilesRepresentation = {
 
 void setup() {
   frameRate(100);
-  size(448, 496);
+  size(448, 496, P3D);
   osc = new OscP5(this, 9000);
   madMapper = new NetAddress(ip, 8000);
   img = loadImage("map.jpg");
@@ -101,6 +104,8 @@ void setup() {
   pressStartMovie.loop();
   pac1Image = pac1Izq;
   pac2Image = pac2Izq;
+  spout = new Spout(this);
+  spout.createSender("Memo es Puto");
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -108,7 +113,6 @@ void draw() {
   if (gameStage == 0) { // Press Start
     background(0);
     image(pressStartMovie, 0, 0);
-    text("Press Start", 30,30);
   } else if (gameStage == 1) { // 3, 2, 1
     // Animación 3, 2, 1
     if(counterMovie.time() >= counterMovie.duration()) {
@@ -146,7 +150,6 @@ void draw() {
       pac2Image = pac2Izq;
     } else {
       image(counterMovie, 0,0);
-      text("3,2,1", 30,30);
     }
   } else if (gameStage == 2) { // Juego
     image(img,0,0);
@@ -193,12 +196,12 @@ void draw() {
   } else { // Game Over
     if (gameOverMovie.time() < gameOverMovie.duration()) {
       image(gameOverMovie, 0,0);
-      text("Game Over", 30,30);
     } else {
       gameStage = 0;
       pressStartMovie.loop();
     }
   }
+  spout.sendTexture();
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
