@@ -1,7 +1,7 @@
 class Pacman {
   PVector pos;
   PVector vel = new PVector(-1, 0);
-  
+
   //when pacman reaches a node its velocity changes to the value stored in turnto
   PVector turnTo = new PVector(-1, 0);
   boolean turn = false;
@@ -14,13 +14,13 @@ class Pacman {
       pacId = 0;
     } else {
       pacId = 1;
-      vel = new PVector(1,0);
+      vel = new PVector(0,1);
     }
     pos = new PVector(13*16+83, 23*16 +8);
   }
 
   //---------------------------------------------------------------------------------------------------------------------------------------------------------
-  
+
   //draws pacman
   void show() {
     //fill(pacColor);
@@ -42,7 +42,7 @@ class Pacman {
   }
 
   //---------------------------------------------------------------------------------------------------------------------------------------------------------
-  
+
   //returns whether the input vector hits pacman
   boolean hitPacman(PVector GhostPos) {
     if (dist(GhostPos.x, GhostPos.y, pos.x, pos.y) < 10) {
@@ -50,8 +50,8 @@ class Pacman {
     }
     return false;
   }
-  
-  
+
+
   //---------------------------------------------------------------------------------------------------------------------------------------------------------
   //called when a ghost hits pacman
   void kill() {
@@ -59,7 +59,7 @@ class Pacman {
     if (lives < 0) {//game over if no lives left
       gameOver = true;
     } else {
-      pos = new PVector(13*16+8, 23*16 +8);     //reset positions  
+      pos = new PVector(13*16+8, 23*16 +8);     //reset positions
 
       blinky = new Blinky();
       clyde = new Clyde();
@@ -78,12 +78,12 @@ class Pacman {
 
       PVector matrixPosition = new PVector((pos.x-8)/16, (pos.y - 8)/16);//convert position to an array position
 
-      //reset all the paths for all the ghosts  
+      //reset all the paths for all the ghosts
       blinky.setPath();
       pinky.setPath();
       clyde.setPath();
-      inky.setPath(); 
-      
+      inky.setPath();
+
       //check if the position has been eaten or not, note the blank spaces are initialised as already eaten
       if (!tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten) {
         tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten =true;
@@ -100,8 +100,8 @@ class Pacman {
           inky.flashCount = 0;
         }
       }
-      
-      
+
+
       PVector positionToCheck= new PVector(matrixPosition.x + turnTo.x, matrixPosition.y+ turnTo.y); // the position in the tiles double array that the player is turning towards
 
       if (tiles[floor(positionToCheck.y)][floor(positionToCheck.x)].wall) {//check if there is a free space in the direction that it is going to turn
@@ -117,7 +117,7 @@ class Pacman {
     } else {
       if ((pos.x+10*vel.x-8)%16 == 0 && (pos.y + 10*vel.y - 8)% 16 ==0) {//if 10 places off a critical position in the direction that pacman is moving
         PVector matrixPosition = new PVector((pos.x+10*vel.x-8)/16, (pos.y+10*vel.y-8)/16);//convert that position to an array position
-        if (!tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten ) {//if that tile has not been eaten 
+        if (!tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten ) {//if that tile has not been eaten
           tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten =true;//eat it
           score +=1;
           println("Score:", score);

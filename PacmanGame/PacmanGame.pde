@@ -1,14 +1,20 @@
-//import stuff for pathfinding
+/**
+ * Pacman Game
+ * We_Make (C) 2018.
+ */
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
-//import stuff for madmapper
 import oscP5.*;
 import netP5.*;
-// stuff for video
 import processing.video.*;
 import spout.*;
+import processing.sound.*;
 
+// Sonido de ambiente.
+SoundFile ambient;
+
+// Spout connection.
 Spout spout;
 
 // Videos
@@ -29,54 +35,60 @@ int lives = 2;
 String ip = "192.168.0.2"; // localhost for testing
 
 Pacman pacman, pacman2;
-PImage img;//background image 
+PImage img;//background image
 
+// Ghosts images.
 PImage f1, f2, f3, f4;
 
+// Pacman images.
 PImage pac1Image, pac2Image;
 
+// First pacman positions.
 PImage pac1Arr, pac1Ab, pac1Der, pac1Izq;
+// Second pacman positions.
 PImage pac2Arr, pac2Ab, pac2Der, pac2Izq;
 
+// The stage of the game.
 int gameStage = 0;
 
 Pinky pinky;
 Blinky blinky;
 Clyde clyde;
 Inky inky;
+
 Tile[][] tiles = new Tile[31][28]; //note it goes y then x because of how I inserted the data
 
-int[][] tilesRepresentation = { 
-  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 
-  {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, 
-  {1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1}, 
-  {1, 8, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 8, 1}, 
-  {1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1}, 
-  {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, 
-  {1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1}, 
-  {1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1}, 
-  {1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1}, 
-  {1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 6, 1, 1, 6, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1}, 
-  {1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 6, 1, 1, 6, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1}, 
-  {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1}, 
-  {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1}, 
-  {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1}, 
-  {1, 1, 1, 1, 1, 1, 0, 6, 6, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 6, 6, 0, 1, 1, 1, 1, 1, 1}, 
-  {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1}, 
-  {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1}, 
-  {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1}, 
-  {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1}, 
-  {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1}, 
-  {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, 
-  {1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1}, 
-  {1, 8, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 8, 1}, 
-  {1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1}, 
-  {1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1}, 
-  {1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1}, 
-  {1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1}, 
-  {1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1}, 
-  {1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1}, 
-  {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, 
+int[][] tilesRepresentation = {
+  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+  {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+  {1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1},
+  {1, 8, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 8, 1},
+  {1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1},
+  {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+  {1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1},
+  {1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1},
+  {1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1},
+  {1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 6, 1, 1, 6, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+  {1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 6, 1, 1, 6, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+  {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+  {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+  {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+  {1, 1, 1, 1, 1, 1, 0, 6, 6, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 6, 6, 0, 1, 1, 1, 1, 1, 1},
+  {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+  {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+  {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+  {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+  {1, 1, 1, 1, 1, 1, 0, 1, 1, 6, 1, 1, 1, 1, 1, 1, 1, 1, 6, 1, 1, 0, 1, 1, 1, 1, 1, 1},
+  {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+  {1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1},
+  {1, 8, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 8, 1},
+  {1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1},
+  {1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1},
+  {1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1},
+  {1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1},
+  {1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
+  {1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
+  {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
   {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -105,7 +117,8 @@ void setup() {
   pac1Image = pac1Izq;
   pac2Image = pac2Izq;
   spout = new Spout(this);
-  spout.createSender("Memo es Puto");
+  spout.createSender("We_Make");
+  ambient = new SoundFile(this, "ambient.mp3");
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -137,7 +150,7 @@ void draw() {
           }
         }
       }
-    
+
       pacman = new Pacman(0); // image for pac1
       pacman2 = new Pacman(1); // image for pac2
       pinky = new Pinky();
@@ -148,6 +161,7 @@ void draw() {
       score = 0;
       pac1Image = pac1Izq;
       pac2Image = pac2Izq;
+      ambient.loop();
     } else {
       image(counterMovie, 0,0);
     }
@@ -155,33 +169,33 @@ void draw() {
     image(img,0,0);
     if (!pacman.gameOver) {
       stroke(255);
-  
+
       for (int i = 0; i< 28; i++) {
         for (int j = 0; j< 31; j++) {
           tiles[j][i].show();
         }
       }
-      
+
       pacman.move();
       pacman2.move();
-  
+
       //move and show the ghosts
       inky.show();
       inky.move();
-  
+
       clyde.show();
       clyde.move();
-  
+
       pinky.show();
       pinky.move();
-  
+
       blinky.show();
       blinky.move();
-  
+
       //show pacman last so he appears over the path lines
       pacman.show();
       pacman2.show();
-      
+
       // Print scores
       fill(255,255,0);
       textSize(16);
@@ -192,6 +206,7 @@ void draw() {
       osc.send(new OscMessage("/cues/Bank 1/scenes/by_cell/col_2"), madMapper);
       gameOverMovie.stop();
       gameOverMovie.play();
+      ambient.stop();
     }
   } else { // Game Over
     if (gameOverMovie.time() < gameOverMovie.duration()) {
@@ -201,6 +216,7 @@ void draw() {
       pressStartMovie.loop();
     }
   }
+  // Send data to spout.
   spout.sendTexture();
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------
@@ -263,6 +279,7 @@ void keyPressed() {//controls for pacman
        break;
     }
   } else if (gameStage == 0) {
+    // Start game.
     switch(key) {
       case 'y':
       case 'Y':
@@ -316,9 +333,9 @@ Path AStar(Node start, Node finish, PVector vel)
   big.add(extend);
 
 
-  boolean winner = false;//has a path from start to finish been found  
+  boolean winner = false;//has a path from start to finish been found
 
-  while (true) //repeat the process until ideal path is found or there is not path found 
+  while (true) //repeat the process until ideal path is found or there is not path found
   {
     extend = big.pop();//grab the front path form the big to be extended
     if (extend.path.getLast().equals(finish)) //if goal found
@@ -327,7 +344,7 @@ Path AStar(Node start, Node finish, PVector vel)
       {
         winner = true;
         winningPath = extend.clone();
-      } else { //if current path found the goal in a shorter distance than the previous winner 
+      } else { //if current path found the goal in a shorter distance than the previous winner
         if (winningPath.distance > extend.distance)
         {
           winningPath = extend.clone();//set this path as the winning path
@@ -339,18 +356,18 @@ Path AStar(Node start, Node finish, PVector vel)
       } else {//if not the current extend is useless to us as it cannot be extended since its finished
         extend = big.pop();//so get the next path
       }
-    } 
+    }
 
 
     //if the final node in the path has already been checked and the distance to it was shorter than this path has taken to get there than this path is no good
     if (!extend.path.getLast().checked || extend.distance < extend.path.getLast().smallestDistToPoint)
-    {     
+    {
       if (!winner || extend.distance + dist(extend.path.getLast().x, extend.path.getLast().y, finish.x, finish.y)  < winningPath.distance) //dont look at paths that are longer than a path which has already reached the goal
       {
 
         //if this is the first path to reach this node or the shortest path to reach this node then set the smallest distance to this point to the distance of this path
         extend.path.getLast().smallestDistToPoint = extend.distance;
-        
+
         //move all paths to sorting form big then add the new paths (in the for loop)and sort them back into big.
         sorting = (LinkedList)big.clone();
         Node tempN = new Node(0, 0);//reset temp node
@@ -358,11 +375,11 @@ Path AStar(Node start, Node finish, PVector vel)
           tempN = extend.path.get(extend.path.size() -2);//set the temp node to be the second last node in the path
         }
 
-        for (int i =0; i< extend.path.getLast().edges.size(); i++) //for each node incident (connected) to the final node of the path to be extended 
+        for (int i =0; i< extend.path.getLast().edges.size(); i++) //for each node incident (connected) to the final node of the path to be extended
         {
-          if (tempN != extend.path.getLast().edges.get(i))//if not going backwards i.e. the new node is not the previous node behind it 
-          {     
-     
+          if (tempN != extend.path.getLast().edges.get(i))//if not going backwards i.e. the new node is not the previous node behind it
+          {
+
             //if the direction to the new node is in the opposite to the way the path was heading then dont count this path
             PVector directionToNode = new PVector( extend.path.getLast().edges.get(i).x -extend.path.getLast().x, extend.path.getLast().edges.get(i).y - extend.path.getLast().y );
             directionToNode.limit(vel.mag());
@@ -403,7 +420,7 @@ Path AStar(Node start, Node finish, PVector vel)
     if (big.isEmpty()) {
       if (winner ==false) //there is not path from start to finish
       {
-        print("FUCK!!!!!!!!!!");//error message 
+        print("No se pudo encontrar una ruta.");//error message
         return null;
       } else {//if winner is found then the shortest winner is stored in winning path so return that
         return winningPath.clone();
@@ -412,6 +429,7 @@ Path AStar(Node start, Node finish, PVector vel)
   }
 }
 
+// Read data from movie file.
 void movieEvent(Movie m) {
   m.read();
 }

@@ -1,12 +1,12 @@
 class Clyde {
-    PVector pos = new PVector(1*16 +8, 29*16+8);
+  PVector pos = new PVector(1*16 +8, 29*16+8);
   PVector vel = new PVector(1, 0);
   Path bestPath; // the variable stores the path the ghost will be following
   ArrayList<Node> ghostNodes = new ArrayList<Node>();//the nodes making up the path including the ghosts position and the target position
   Node start;//the ghosts position as a node
   Node end; //the ghosts target position as a node
   color colour = color(255, 100, 0);//orange
-  
+
   boolean chase = true;//true if the ghost is in chase mode false if in scatter mode
   boolean frightened = false;//true if the ghost is in frightened mode
   int flashCount = 0;//in order to make the ghost flash when frightened this is a counter
@@ -14,7 +14,7 @@ class Clyde {
   boolean returnHome = false;//if eaten return home
   boolean deadForABit = false;//after the ghost returns home it disappears for a bit
   int deadCount = 0;
-  
+
 
   //--------------------------------------------------------------------------------------------------------------------------------------------------
   //constructor
@@ -28,7 +28,7 @@ class Clyde {
     chaseCount ++;
     if (chase) {
       if (chaseCount > 2000) {
-        chase = false;  
+        chase = false;
         chaseCount = 0;
       }
     } else {
@@ -37,9 +37,9 @@ class Clyde {
         chaseCount = 0;
       }
     }
-    
-    
-    
+
+
+
     if (deadForABit) {
       deadCount ++;
       if (deadCount > 300) {
@@ -48,7 +48,7 @@ class Clyde {
     } else {//if not deadforabit then show the ghost
       if (!frightened) {
         if (returnHome) {//have the ghost be transparent if on its way home
-          stroke(colour, 100); 
+          stroke(colour, 100);
           fill(colour, 100);
           tint(0,0,0);
         } else {// colour the ghost
@@ -88,7 +88,7 @@ class Clyde {
     }
   }
   //--------------------------------------------------------------------------------------------------------------------------------------------------
-  
+
   //calculates a path from the first node in ghost nodes to the last node in ghostNodes and sets it as best path
   void setPath() {
     ghostNodes.clear();
@@ -101,7 +101,7 @@ class Clyde {
     }
   }
   //--------------------------------------------------------------------------------------------------------------------------------------------------
-  //sets all the nodes and connects them with adjacent nodes 
+  //sets all the nodes and connects them with adjacent nodes
   //also sets the target node
   void setNodes() {
 
@@ -134,7 +134,7 @@ class Clyde {
         ghostNodes.add(new Node(1, 29));
       }
     }
-    
+
     for (int i = 0; i< ghostNodes.size(); i++) {//connect all the nodes together
       ghostNodes.get(i).addEdges(ghostNodes);
     }
@@ -162,7 +162,7 @@ class Clyde {
       }
     }
 
-    if ((pos.x-8)%16 == 0 && (pos.y - 8)% 16 ==0) {//if on a critical position 
+    if ((pos.x-8)%16 == 0 && (pos.y - 8)% 16 ==0) {//if on a critical position
 
       PVector matrixPosition = new PVector((pos.x-8)/16, (pos.y - 8)/16);//convert position to an array position
 
@@ -217,9 +217,9 @@ class Clyde {
 
         setPath();
 
-        for (int i =0; i< bestPath.path.size(); i++) {//if currently on a node turn towards the direction of the next node in the path 
+        for (int i =0; i< bestPath.path.size(); i++) {//if currently on a node turn towards the direction of the next node in the path
           if (matrixPosition.x ==  bestPath.path.get(i).x && matrixPosition.y == bestPath.path.get(i).y) {
-            
+
             vel = new PVector(bestPath.path.get(i+1).x - matrixPosition.x, bestPath.path.get(i+1).y - matrixPosition.y);
             vel.limit(1);
 
