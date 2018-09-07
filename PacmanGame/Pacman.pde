@@ -5,14 +5,17 @@ class Pacman {
   //when pacman reaches a node its velocity changes to the value stored in turnto
   PVector turnTo = new PVector(-1, 0);
   boolean turn = false;
-  int score = 0;
-  int lives = 2;
   boolean  gameOver = false;
-  PImage pacImage;
+  int pacId;
   //---------------------------------------------------------------------------------------------------------------------------------------------------------
   //constructor
-  Pacman(PImage c) {
-    pacImage = c;
+  Pacman(int id) {
+    if (id == 0) {
+      pacId = 0;
+    } else {
+      pacId = 1;
+      vel = new PVector(1,0);
+    }
     pos = new PVector(13*16+83, 23*16 +8);
   }
 
@@ -23,7 +26,11 @@ class Pacman {
     //fill(pacColor);
     //stroke(pacColor);
     //ellipse(pos.x, pos.y, 20, 20);
-    image(pacImage, pos.x-10, pos.y-10, 20, 20);
+    if(pacId == 0) {
+      image(pac1Image, pos.x-10, pos.y-10, 20, 20);
+    } else {
+      image(pac2Image, pos.x-10, pos.y-10, 20, 20);
+    }
   }
 
   //---------------------------------------------------------------------------------------------------------------------------------------------------------

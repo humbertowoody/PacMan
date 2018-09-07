@@ -12,18 +12,28 @@ import processing.video.*;
 Movie pressStartMovie;
 Movie counterMovie;
 Movie gameOverMovie;
-Movie brandMovie;
 
 // OSC Stuff
 OscP5 osc;
 NetAddress madMapper;
+
+// Score
+int score = 0;
+
+// Lives
+int lives = 2;
 
 String ip = "192.168.0.2"; // localhost for testing
 
 Pacman pacman, pacman2;
 PImage img;//background image 
 
-PImage pac1, pac2, f1, f2, f3, f4;
+PImage f1, f2, f3, f4;
+
+PImage pac1Image, pac2Image;
+
+PImage pac1Arr, pac1Ab, pac1Der, pac1Izq;
+PImage pac2Arr, pac2Ab, pac2Der, pac2Izq;
 
 int gameStage = 0;
 
@@ -76,14 +86,21 @@ void setup() {
   pressStartMovie = new Movie(this, "pressStart.mov");
   counterMovie = new Movie(this, "pressStart.mov");
   gameOverMovie = new Movie(this, "pressStart.mov");
-  //brandMovie = new Movie(this, "");
-  pac1 = loadImage("pacman1.png");
-  pac2 = loadImage("pacman2.png");
+  pac1Arr = loadImage("pacman1Arr.png");
+  pac1Ab = loadImage("pacman1Ab.png");
+  pac1Izq = loadImage("pacman1Izq.png");
+  pac1Der = loadImage("pacman1Der.png");
+  pac2Arr = loadImage("pacman2Arr.png");
+  pac2Ab = loadImage("pacman2Ab.png");
+  pac2Izq = loadImage("pacman2Izq.png");
+  pac2Der = loadImage("pacman2Der.png");
   f1 = loadImage("fantasma1.png");
   f2 = loadImage("fantasma2.png");
   f3 = loadImage("fantasma3.png");
   f4 = loadImage("fantasma4.png");
   pressStartMovie.loop();
+  pac1Image = pac1Izq;
+  pac2Image = pac2Izq;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -91,6 +108,7 @@ void draw() {
   if (gameStage == 0) { // Press Start
     background(0);
     image(pressStartMovie, 0, 0);
+    text("Press Start", 30,30);
   } else if (gameStage == 1) { // 3, 2, 1
     // Animación 3, 2, 1
     if(counterMovie.time() >= counterMovie.duration()) {
@@ -116,14 +134,17 @@ void draw() {
         }
       }
     
-      pacman = new Pacman(pac1); // image for pac1
-      pacman2 = new Pacman(pac2); // image for pac2
+      pacman = new Pacman(0); // image for pac1
+      pacman2 = new Pacman(1); // image for pac2
       pinky = new Pinky();
       blinky = new Blinky();
       clyde = new Clyde();
       inky = new Inky();
+      lives = 4;
+      score = 0;
     } else {
       image(counterMovie, 0,0);
+      text("3,2,1", 30,30);
     }
   } else if (gameStage == 2) { // Juego
     image(img,0,0);
@@ -159,25 +180,21 @@ void draw() {
       // Print scores
       fill(255,255,0);
       textSize(16);
-      text("SCORE: " + pacman.score, 179, 230);
-      text("VIDAS: " + (pacman.lives+1), 179,250);
+      text("Puntaje: " + score, 179, 230);
+      text("Vidas: " + (lives+1), 179,250);
     } else {
       gameStage = 3;
       osc.send(new OscMessage("/cues/Bank 1/scenes/by_cell/col_2"), madMapper);
       gameOverMovie.play();
     }
-  } else if (gameStage == 3) { // Game Over
+  } else { // Game Over
     if (gameOverMovie.time() < gameOverMovie.duration()) {
       image(gameOverMovie, 0,0);
+      text("Game Over", 30,30);
     } else {
-      gameStage = 4;
+      gameStage = 0;
+      pressStartMovie.loop();
     }
-  } else { // Marca
-    background(0);
-    text("La marca verga va aquí", 100, 100);
-    gameStage = 0;
-    delay(5000);
-    pressStartMovie.loop();
   }
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------
@@ -190,18 +207,22 @@ void keyPressed() {//controls for pacman
           case UP:
             pacman.turnTo = new PVector(0, -1);
             pacman.turn = true;
+            pac1Image = pac1Arr;
             break;
           case DOWN:
             pacman.turnTo = new PVector(0, 1);
             pacman.turn = true;
+            pac1Image = pac1Ab;
             break;
           case LEFT:
             pacman.turnTo = new PVector(-1, 0);
             pacman.turn = true;
+            pac1Image = pac1Izq;
             break;
           case RIGHT:
             pacman.turnTo = new PVector(1, 0);
             pacman.turn = true;
+            pac1Image = pac1Der;
             break;
          }
          break;
@@ -211,24 +232,28 @@ void keyPressed() {//controls for pacman
      case 'A':
        pacman2.turnTo = new PVector(-1, 0);
        pacman2.turn = true;
+       pac2Image = pac2Izq;
        break;
      // down
      case 's':
      case 'S':
        pacman2.turnTo = new PVector(0, 1);
        pacman2.turn = true;
+       pac2Image = pac2Ab;
        break;
      // right
      case 'd':
      case 'D':
        pacman2.turnTo = new PVector(1, 0);
        pacman2.turn = true;
+       pac2Image = pac2Der;
        break;
      // up
      case 'w':
      case 'W':
        pacman2.turnTo = new PVector(0, -1);
        pacman2.turn = true;
+       pac2Image = pac2Arr;
        break;
     }
   } else if (gameStage == 0) {

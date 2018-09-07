@@ -74,6 +74,7 @@ class Pinky {
       }
       //ellipse(pos.x, pos.y, 20, 20);//draw the ghost as a circle
       image(f4, pos.x-10, pos.y-10, 20, 20);
+      noTint();
     }
   }
 

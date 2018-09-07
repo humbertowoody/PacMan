@@ -75,6 +75,7 @@ class Clyde {
       }
       //ellipse(pos.x, pos.y, 20, 20);//draw the ghost as a circle
       image(f2, pos.x-10, pos.y-10, 20, 20);
+      noTint();
     }
   }
 
