@@ -98,9 +98,9 @@ void setup() {
   osc = new OscP5(this, 9000);
   madMapper = new NetAddress(ip, 8000);
   img = loadImage("map.jpg");
-  pressStartMovie = new Movie(this, "pressStart.mov");
-  counterMovie = new Movie(this, "pressStart.mov");
-  gameOverMovie = new Movie(this, "pressStart.mov");
+  pressStartMovie = new Movie(this, "pressStart.mp4");
+  counterMovie = new Movie(this, "counter.mp4");
+  gameOverMovie = new Movie(this, "gameOver.mp4");
   pac1Arr = loadImage("pacman1Arr.png");
   pac1Ab = loadImage("pacman1Ab.png");
   pac1Izq = loadImage("pacman1Izq.png");
