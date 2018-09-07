@@ -142,6 +142,8 @@ void draw() {
       inky = new Inky();
       lives = 4;
       score = 0;
+      pac1Image = pac1Izq;
+      pac2Image = pac2Izq;
     } else {
       image(counterMovie, 0,0);
       text("3,2,1", 30,30);
@@ -185,6 +187,7 @@ void draw() {
     } else {
       gameStage = 3;
       osc.send(new OscMessage("/cues/Bank 1/scenes/by_cell/col_2"), madMapper);
+      gameOverMovie.stop();
       gameOverMovie.play();
     }
   } else { // Game Over
@@ -262,6 +265,7 @@ void keyPressed() {//controls for pacman
       case 'Y':
         if (gameStage == 0){
           gameStage = 1;
+          counterMovie.stop();
           counterMovie.play();
           pressStartMovie.stop();
         }
