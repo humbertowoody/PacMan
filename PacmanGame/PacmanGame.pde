@@ -420,7 +420,7 @@ Path AStar(Node start, Node finish, PVector vel)
     if (big.isEmpty()) {
       if (winner ==false) //there is not path from start to finish
       {
-        print("No se pudo encontrar una ruta.");//error message
+        println("No se pudo encontrar una ruta.");//error message
         return null;
       } else {//if winner is found then the shortest winner is stored in winning path so return that
         return winningPath.clone();
