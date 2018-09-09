@@ -118,6 +118,7 @@ void setup() {
   pac2Image = pac2Izq;
   spout = new Spout(this);
   spout.createSender("We_Make");
+  osc.send(new OscMessage("/cues/Bank 1/scenes/by_cell/col_1"), madMapper);
   frameRate(100);
 }
 //--------------------------------------------------------------------------------------------------------------------------------------------------
@@ -162,6 +163,7 @@ void draw() {
       pac1Image = pac1Izq;
       pac2Image = pac2Izq;
       ambient.loop();
+      osc.send(new OscMessage("/cues/Bank 1/scenes/by_cell/col_3"), madMapper);
     } else {
       image(counterMovie, 0,0);
     }
@@ -203,7 +205,7 @@ void draw() {
       text("Vidas: " + (lives+1), 179,250);
     } else {
       gameStage = 3;
-      osc.send(new OscMessage("/cues/Bank 1/scenes/by_cell/col_2"), madMapper);
+      osc.send(new OscMessage("/cues/Bank 1/scenes/by_cell/col_4"), madMapper);
       gameOverMovie.stop();
       gameOverMovie.play();
       ambient.stop();
@@ -214,6 +216,7 @@ void draw() {
     } else {
       gameStage = 0;
       pressStartMovie.loop();
+      osc.send(new OscMessage("/cues/Bank 1/scenes/by_cell/col_1"), madMapper);
     }
   }
   // Send data to spout.
@@ -288,6 +291,7 @@ void keyPressed() {//controls for pacman
           counterMovie.stop();
           counterMovie.play();
           pressStartMovie.stop();
+          osc.send(new OscMessage("/cues/Bank 1/scenes/by_cell/col_2"), madMapper);
         }
         break;
     }
